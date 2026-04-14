@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tydic.filehub.mapper.uoc.JobExecutionLogMapper">
+
+    <resultMap id="JobExecutionLogMap" type="com.tydic.filehub.dto.JobExecutionLog">
+        <id column="id" property="id"/>
+        <result column="file_oper_code" property="fileOperCode"/>
+        <result column="trigger_type" property="triggerType"/>
+        <result column="status" property="status"/>
+        <result column="summary" property="summary"/>
+        <result column="error_stack" property="errorStack"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.tydic.filehub.dto.JobExecutionLog" useGeneratedKeys="true" keyProperty="id">
+        insert into job_execution_log (
+            file_oper_code, trigger_type, status, summary, error_stack,
+            start_time, end_time, create_time
+        ) values (
+            #{fileOperCode}, #{triggerType}, #{status}, #{summary}, #{errorStack},
+            #{startTime}, #{endTime}, #{createTime}
+        )
+    </insert>
+
+    <update id="updateCompletion" parameterType="com.tydic.filehub.dto.JobExecutionLog">
+        update job_execution_log
+        set status = #{status},
+            summary = #{summary},
+            error_stack = #{errorStack},
+            end_time = #{endTime}
+        where id = #{id}
+    </update>
+
+    <select id="selectRecentByFileOperCode" resultMap="JobExecutionLogMap">
+        select id, file_oper_code, trigger_type, status, summary, error_stack, start_time, end_time, create_time
+        from job_execution_log
+        where file_oper_code = #{fileOperCode}
+        order by id desc
+        limit #{limit}
+    </select>
+
+    <select id="selectRecent" resultMap="JobExecutionLogMap">
+        select id, file_oper_code, trigger_type, status, summary, error_stack, start_time, end_time, create_time
+        from job_execution_log
+        order by id desc
+        limit #{limit}
+    </select>
+</mapper>

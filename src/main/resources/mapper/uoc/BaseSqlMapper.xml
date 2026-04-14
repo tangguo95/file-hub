@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tydic.filehub.mapper.uoc.BaseSqlMapper">
+    <select id="selectStr" resultType="java.util.LinkedHashMap" parameterType="java.lang.String">
+        ${sqlStr}
+    </select>
+
+    <select id="queryDtsWarnPhoneNo" resultType="java.util.Map">
+        select code_id from code_list where type_code = 'dtsWarnPhone' and eff_flag = '1'
+    </select>
+
+    <insert id="insertStr" parameterType="java.lang.String">
+        ${sqlStr}
+    </insert>
+
+     <delete id="deleteSqlStr" parameterType="java.lang.String">
+        ${sqlStr}
+    </delete>
+</mapper>

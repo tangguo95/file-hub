@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>文件任务管理</title>
+    <link rel="stylesheet" th:href="@{/admin/admin.css}">
+</head>
+<body>
+<div class="shell">
+    <aside class="sidebar">
+        <h1>File Hub</h1>
+        <nav>
+            <a th:href="@{/admin/jobs}">定时任务</a>
+            <a class="active" th:href="@{/admin/files}">文件任务</a>
+            <a th:href="@{/admin/datasources}">动态数据源</a>
+        </nav>
+    </aside>
+    <main class="content">
+        <header class="hero">
+            <div>
+                <h2>文件上传下载管理</h2>
+                <p>维护文件任务、SFTP 配置、Groovy 钩子与数据入库策略。</p>
+            </div>
+            <p class="flash" th:if="${message}" th:text="${message}"></p>
+        </header>
+
+        <section class="card form-card">
+            <h3>文件任务表单</h3>
+            <form th:action="@{/admin/files/save}" method="post">
+                <input type="hidden" name="id" th:value="${fileForm.id}">
+                <div class="grid three">
+                    <label>任务编码<input name="fileOperCode" th:value="${fileForm.fileOperCode}"></label>
+                    <label>任务名称<input name="jobName" th:value="${fileForm.jobName}"></label>
+                    <label>文件名模板<input name="fileName" th:value="${fileForm.fileName}"></label>
+                    <label>服务器 IP<input name="serverIp" th:value="${fileForm.serverIp}"></label>
+                    <label>服务器端口<input name="serverPort" th:value="${fileForm.serverPort}"></label>
+                    <label>远端路径<input name="filePath" th:value="${fileForm.filePath}"></label>
+                    <label>服务器用户名<input name="serverUserName" th:value="${fileForm.serverUserName}"></label>
+                    <label>服务器密码<input type="password" name="serverPassword" th:value="${fileForm.serverPassword}" placeholder="留空则不修改"></label>
+                    <label>字段分隔符<input name="splitLabel" th:value="${fileForm.splitLabel}"></label>
+                    <label>文件格式
+                        <select name="fileFormat" th:value="${fileForm.fileFormat}">
+                            <option value="CSV">CSV</option>
+                            <option value="XLS">XLS (Excel 97-2003)</option>
+                            <option value="XLSX">XLSX (Excel 2007+)</option>
+                        </select>
+                    </label>
+                    <label>入库表<input name="downloadTbName" th:value="${fileForm.downloadTbName}"></label>
+                    <label>入库字段<input name="insertColumnName" th:value="${fileForm.insertColumnName}"></label>
+                    <label>动态数据源编码<input name="datasourceCode" th:value="${fileForm.datasourceCode}"></label>
+                    <label>处理类型
+                        <select name="downloadDealType" th:value="${fileForm.downloadDealType}">
+                            <option value="1">新增</option>
+                            <option value="2">删插更新</option>
+                            <option value="3">清表后新增</option>
+                        </select>
+                    </label>
+                    <label>操作类型
+                        <select name="operType" th:value="${fileForm.operType}">
+                            <option value="1">下载</option>
+                            <option value="2">上传</option>
+                        </select>
+                    </label>
+                    <label>调度启用
+                        <select name="jobEnabled" th:value="${fileForm.jobEnabled}">
+                            <option value="1">启用</option>
+                            <option value="0">停用</option>
+                        </select>
+                    </label>
+                    <label>Cron<input name="cronExpression" th:value="${fileForm.cronExpression}"></label>
+                    <label>状态
+                        <select name="state" th:value="${fileForm.state}">
+                            <option value="1">有效</option>
+                            <option value="0">无效</option>
+                        </select>
+                    </label>
+                    <label>上传 OSS
+                        <select name="isUploadOss" th:value="${fileForm.isUploadOss}">
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </label>
+                </div>
+                <label>查询 SQL<textarea name="querySql" rows="3" th:text="${fileForm.querySql}"></textarea></label>
+                <label>文件扩展 SQL<textarea name="fileNameExtSql" rows="3" th:text="${fileForm.fileNameExtSql}"></textarea></label>
+                <label>文件列表 Shell<textarea name="fileListShell" rows="2" th:text="${fileForm.fileListShell}"></textarea></label>
+                <label>前置 Groovy<textarea name="fileOperGroovyBefore" rows="4" th:text="${fileForm.fileOperGroovyBefore}"></textarea></label>
+                <label>后置 Groovy<textarea name="fileOperGroovyAfter" rows="4" th:text="${fileForm.fileOperGroovyAfter}"></textarea></label>
+                <div class="actions">
+                    <button type="submit">保存文件任务</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="card">
+            <h3>文件任务列表</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>编码</th>
+                    <th>名称</th>
+                    <th>类型</th>
+                    <th>路径</th>
+                    <th>动态数据源</th>
+                    <th>最近状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${files}">
+                    <td th:text="${item.fileOperCode}"></td>
+                    <td th:text="${item.jobName}"></td>
+                    <td th:text="${item.operType == 1 ? '下载' : '上传'}"></td>
+                    <td th:text="${item.filePath}"></td>
+                    <td th:text="${item.datasourceCode}"></td>
+                    <td th:text="${item.lastStatus} ?: '未执行'"></td>
+                    <td class="table-actions">
+                        <a th:href="@{/admin/files(editId=${item.id})}">编辑</a>
+                        <form th:action="@{|/admin/jobs/${item.fileOperCode}/trigger|}" method="post"><button type="submit">执行</button></form>
+                        <form th:action="@{|/admin/files/${item.id}/delete|}" method="post"><button type="submit">删除</button></form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+</body>
+</html>

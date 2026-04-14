@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>任务管理</title>
+    <link rel="stylesheet" th:href="@{/admin/admin.css}">
+</head>
+<body>
+<div class="shell">
+    <aside class="sidebar">
+        <h1>File Hub</h1>
+        <nav>
+            <a class="active" th:href="@{/admin/jobs}">定时任务</a>
+            <a th:href="@{/admin/files}">文件任务</a>
+            <a th:href="@{/admin/datasources}">动态数据源</a>
+        </nav>
+    </aside>
+    <main class="content">
+        <header class="hero">
+            <div>
+                <h2>定时任务管理</h2>
+                <p>管理 cron、启停、手动执行与最近执行日志。</p>
+            </div>
+            <p class="flash" th:if="${message}" th:text="${message}"></p>
+            <p class="flash error" th:if="${error}" th:text="${error}"></p>
+        </header>
+
+        <section class="card form-card">
+            <h3>任务表单</h3>
+            <form th:action="@{/admin/jobs/save}" method="post">
+                <input type="hidden" name="id" th:value="${jobForm.id}">
+                <div class="grid">
+                    <label>任务编码<input name="fileOperCode" th:value="${jobForm.fileOperCode}" placeholder="JOB_DEMO"></label>
+                    <label>任务名称<input name="jobName" th:value="${jobForm.jobName}" placeholder="演示任务"></label>
+                    <label>Cron<input name="cronExpression" th:value="${jobForm.cronExpression}" placeholder="0 */5 * * * *"></label>
+                    <label>任务类型
+                        <select name="operType" th:value="${jobForm.operType}">
+                            <option value="1">下载</option>
+                            <option value="2">上传</option>
+                        </select>
+                    </label>
+                    <label>启用调度
+                        <select name="jobEnabled" th:value="${jobForm.jobEnabled}">
+                            <option value="1">启用</option>
+                            <option value="0">停用</option>
+                        </select>
+                    </label>
+                    <label>启用状态
+                        <select name="state" th:value="${jobForm.state}">
+                            <option value="1">有效</option>
+                            <option value="0">无效</option>
+                        </select>
+                    </label>
+                </div>
+                <label>备注<textarea name="remark" rows="3" th:text="${jobForm.remark}"></textarea></label>
+                <div class="actions">
+                    <button type="submit">保存任务</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="card">
+            <h3>任务列表</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>编码</th>
+                    <th>名称</th>
+                    <th>Cron</th>
+                    <th>启用</th>
+                    <th>最近状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${jobs}">
+                    <td th:text="${item.fileOperCode}"></td>
+                    <td th:text="${item.jobName}"></td>
+                    <td th:text="${item.cronExpression}"></td>
+                    <td th:text="${item.jobEnabled == 1 ? '启用' : '停用'}"></td>
+                    <td th:text="${item.lastStatus} ?: '未执行'"></td>
+                    <td class="table-actions">
+                        <a th:href="@{/admin/jobs(editId=${item.id})}">编辑</a>
+                        <form th:action="@{|/admin/jobs/${item.fileOperCode}/trigger|}" method="post"><button type="submit">手动执行</button></form>
+                        <form th:if="${item.jobEnabled == 1}" th:action="@{|/admin/jobs/${item.fileOperCode}/disable|}" method="post"><button type="submit">停用</button></form>
+                        <form th:if="${item.jobEnabled != 1}" th:action="@{|/admin/jobs/${item.fileOperCode}/enable|}" method="post"><button type="submit">启用</button></form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card">
+            <h3>最近执行日志</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>任务编码</th>
+                    <th>触发方式</th>
+                    <th>状态</th>
+                    <th>开始时间</th>
+                    <th>结束时间</th>
+                    <th>摘要</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="log : ${recentLogs}">
+                    <td th:text="${log.fileOperCode}"></td>
+                    <td th:text="${log.triggerType}"></td>
+                    <td th:text="${log.status}"></td>
+                    <td th:text="${log.startTime}"></td>
+                    <td th:text="${log.endTime}"></td>
+                    <td th:text="${log.summary}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:filehub;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  flyway:
+    enabled: true
+  thymeleaf:
+    cache: false
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.tydic.filehub.dto
+  configuration:
+    map-underscore-to-camel-case: true
+
+jasypt:
+  encryptor:
+    password: test
+
+filehub:
+  scheduler:
+    pool-size: 4
+  storage:
+    local-download-dir: ./target/test-downloads
+    local-upload-dir: ./target/test-uploads
+  crypto:
+    decrypt-type: jasypt
+    aes-key: 1234567890123456
+  oss:
+    enabled: false
+    endpoint: http://localhost
+    access-key-id: test
+    access-key-secret: test
+    bucket-name: test
+    folder-name: test
+    address: http://localhost/files/

@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: file-hub
+  datasource:
+    url: jdbc:mysql://localhost:3306/file_hub?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: filehub
+    password: filehub
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  thymeleaf:
+    cache: false
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  jackson:
+    time-zone: Asia/Shanghai
+
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.tydic.filehub.dto
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  port: 6007
+
+logging:
+  level:
+    com.tydic.filehub: INFO
+
+jasypt:
+  encryptor:
+    password: changeit
+
+filehub:
+  scheduler:
+    pool-size: 10
+  storage:
+    local-download-dir: ./var/downloads
+    local-upload-dir: ./var/uploads
+  crypto:
+    decrypt-type: jasypt
+    aes-key: changeit-changeit
+  oss:
+    enabled: false
+    endpoint: http://localhost
+    access-key-id: demo
+    access-key-secret: demo
+    bucket-name: demo
+    folder-name: uploads
+    address: http://localhost/files/

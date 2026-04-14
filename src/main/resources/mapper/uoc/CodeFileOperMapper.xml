@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tydic.filehub.mapper.uoc.CodeFileOperMapper">
+
+    <resultMap id="CodeFileOperMap" type="com.tydic.filehub.dto.CodeFileOper">
+        <id column="id" property="id"/>
+        <result column="file_oper_code" property="fileOperCode"/>
+        <result column="job_name" property="jobName"/>
+        <result column="file_name" property="fileName"/>
+        <result column="server_ip" property="serverIp"/>
+        <result column="server_port" property="serverPort"/>
+        <result column="server_user_name" property="serverUserName"/>
+        <result column="server_password" property="serverPassword"/>
+        <result column="file_path" property="filePath"/>
+        <result column="oper_type" property="operType"/>
+        <result column="download_deal_type" property="downloadDealType"/>
+        <result column="download_data_update_condition" property="downloadDataUpdateCondition"/>
+        <result column="file_url" property="fileUrl"/>
+        <result column="download_tb_name" property="downloadTbName"/>
+        <result column="split_label" property="splitLabel"/>
+        <result column="file_format" property="fileFormat"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="state" property="state"/>
+        <result column="file_name_ext_sql" property="fileNameExtSql"/>
+        <result column="remark" property="remark"/>
+        <result column="query_sql" property="querySql"/>
+        <result column="insert_column_name" property="insertColumnName"/>
+        <result column="deal_remark" property="dealRemark"/>
+        <result column="deal_time" property="dealTime"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="data_source" property="dataSource"/>
+        <result column="is_upload_oss" property="isUploadOss"/>
+        <result column="datasource_code" property="datasourceCode"/>
+        <result column="file_list_shell" property="fileListShell"/>
+        <result column="file_list_shell_enable" property="fileListShellEnable"/>
+        <result column="file_oper_groovy_before" property="fileOperGroovyBefore"/>
+        <result column="file_oper_groovy_before_enable" property="fileOperGroovyBeforeEnable"/>
+        <result column="file_oper_groovy_after" property="fileOperGroovyAfter"/>
+        <result column="file_oper_groovy_after_enable" property="fileOperGroovyAfterEnable"/>
+        <result column="stop_on_row_error" property="stopOnRowError"/>
+        <result column="max_row_errors" property="maxRowErrors"/>
+        <result column="skip_header_lines" property="skipHeaderLines"/>
+        <result column="job_enabled" property="jobEnabled"/>
+        <result column="cron_expression" property="cronExpression"/>
+        <result column="concurrent_mode" property="concurrentMode"/>
+        <result column="last_trigger_time" property="lastTriggerTime"/>
+        <result column="last_finish_time" property="lastFinishTime"/>
+        <result column="last_status" property="lastStatus"/>
+        <result column="last_message" property="lastMessage"/>
+    </resultMap>
+
+    <sql id="allColumns">
+        id, file_oper_code, job_name, file_name, server_ip, server_port, server_user_name, server_password,
+        file_path, oper_type, download_deal_type, download_data_update_condition, file_url, download_tb_name,
+        split_label, file_format, create_time, update_time, state, file_name_ext_sql, remark, query_sql, insert_column_name,
+        deal_remark, deal_time, is_delete, data_source, is_upload_oss, datasource_code, file_list_shell,
+        file_list_shell_enable, file_oper_groovy_before, file_oper_groovy_before_enable, file_oper_groovy_after,
+        file_oper_groovy_after_enable, stop_on_row_error, max_row_errors, skip_header_lines, job_enabled,
+        cron_expression, concurrent_mode, last_trigger_time, last_finish_time, last_status, last_message
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="CodeFileOperMap">
+        select <include refid="allColumns"/>
+        from code_file_oper
+        where id = #{id}
+    </select>
+
+    <select id="selectByFileOperCode" resultMap="CodeFileOperMap">
+        select <include refid="allColumns"/>
+        from code_file_oper
+        where file_oper_code = #{fileOperCode}
+        limit 1
+    </select>
+
+    <select id="selectAll" resultMap="CodeFileOperMap">
+        select <include refid="allColumns"/>
+        from code_file_oper
+        order by update_time desc, id desc
+    </select>
+
+    <select id="search" resultMap="CodeFileOperMap">
+        select <include refid="allColumns"/>
+        from code_file_oper
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and (
+                    file_oper_code like concat('%', #{keyword}, '%')
+                    or ifnull(job_name, '') like concat('%', #{keyword}, '%')
+                    or ifnull(file_name, '') like concat('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="state != null">
+                and state = #{state}
+            </if>
+        </where>
+        order by update_time desc, id desc
+    </select>
+
+    <select id="selectSchedulableJobs" resultMap="CodeFileOperMap">
+        select <include refid="allColumns"/>
+        from code_file_oper
+        where state = 1
+          and job_enabled = 1
+          and cron_expression is not null
+          and cron_expression != ''
+        order by id desc
+    </select>
+
+    <insert id="insertSelective" parameterType="com.tydic.filehub.dto.CodeFileOper" useGeneratedKeys="true" keyProperty="id">
+        insert into code_file_oper
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileOperCode != null">file_oper_code,</if>
+            <if test="jobName != null">job_name,</if>
+            <if test="fileName != null">file_name,</if>
+            <if test="serverIp != null">server_ip,</if>
+            <if test="serverPort != null">server_port,</if>
+            <if test="serverUserName != null">server_user_name,</if>
+            <if test="serverPassword != null">server_password,</if>
+            <if test="filePath != null">file_path,</if>
+            <if test="operType != null">oper_type,</if>
+            <if test="downloadDealType != null">download_deal_type,</if>
+            <if test="downloadDataUpdateCondition != null">download_data_update_condition,</if>
+            <if test="fileUrl != null">file_url,</if>
+            <if test="downloadTbName != null">download_tb_name,</if>
+            <if test="splitLabel != null">split_label,</if>
+            <if test="fileFormat != null">file_format,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="state != null">state,</if>
+            <if test="fileNameExtSql != null">file_name_ext_sql,</if>
+            <if test="remark != null">remark,</if>
+            <if test="querySql != null">query_sql,</if>
+            <if test="insertColumnName != null">insert_column_name,</if>
+            <if test="dealRemark != null">deal_remark,</if>
+            <if test="dealTime != null">deal_time,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="dataSource != null">data_source,</if>
+            <if test="isUploadOss != null">is_upload_oss,</if>
+            <if test="datasourceCode != null">datasource_code,</if>
+            <if test="fileListShell != null">file_list_shell,</if>
+            <if test="fileListShellEnable != null">file_list_shell_enable,</if>
+            <if test="fileOperGroovyBefore != null">file_oper_groovy_before,</if>
+            <if test="fileOperGroovyBeforeEnable != null">file_oper_groovy_before_enable,</if>
+            <if test="fileOperGroovyAfter != null">file_oper_groovy_after,</if>
+            <if test="fileOperGroovyAfterEnable != null">file_oper_groovy_after_enable,</if>
+            <if test="stopOnRowError != null">stop_on_row_error,</if>
+            <if test="maxRowErrors != null">max_row_errors,</if>
+            <if test="skipHeaderLines != null">skip_header_lines,</if>
+            <if test="jobEnabled != null">job_enabled,</if>
+            <if test="cronExpression != null">cron_expression,</if>
+            <if test="concurrentMode != null">concurrent_mode,</if>
+            <if test="lastTriggerTime != null">last_trigger_time,</if>
+            <if test="lastFinishTime != null">last_finish_time,</if>
+            <if test="lastStatus != null">last_status,</if>
+            <if test="lastMessage != null">last_message,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileOperCode != null">#{fileOperCode},</if>
+            <if test="jobName != null">#{jobName},</if>
+            <if test="fileName != null">#{fileName},</if>
+            <if test="serverIp != null">#{serverIp},</if>
+            <if test="serverPort != null">#{serverPort},</if>
+            <if test="serverUserName != null">#{serverUserName},</if>
+            <if test="serverPassword != null">#{serverPassword},</if>
+            <if test="filePath != null">#{filePath},</if>
+            <if test="operType != null">#{operType},</if>
+            <if test="downloadDealType != null">#{downloadDealType},</if>
+            <if test="downloadDataUpdateCondition != null">#{downloadDataUpdateCondition},</if>
+            <if test="fileUrl != null">#{fileUrl},</if>
+            <if test="downloadTbName != null">#{downloadTbName},</if>
+            <if test="splitLabel != null">#{splitLabel},</if>
+            <if test="fileFormat != null">#{fileFormat},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="state != null">#{state},</if>
+            <if test="fileNameExtSql != null">#{fileNameExtSql},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="querySql != null">#{querySql},</if>
+            <if test="insertColumnName != null">#{insertColumnName},</if>
+            <if test="dealRemark != null">#{dealRemark},</if>
+            <if test="dealTime != null">#{dealTime},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="dataSource != null">#{dataSource},</if>
+            <if test="isUploadOss != null">#{isUploadOss},</if>
+            <if test="datasourceCode != null">#{datasourceCode},</if>
+            <if test="fileListShell != null">#{fileListShell},</if>
+            <if test="fileListShellEnable != null">#{fileListShellEnable},</if>
+            <if test="fileOperGroovyBefore != null">#{fileOperGroovyBefore},</if>
+            <if test="fileOperGroovyBeforeEnable != null">#{fileOperGroovyBeforeEnable},</if>
+            <if test="fileOperGroovyAfter != null">#{fileOperGroovyAfter},</if>
+            <if test="fileOperGroovyAfterEnable != null">#{fileOperGroovyAfterEnable},</if>
+            <if test="stopOnRowError != null">#{stopOnRowError},</if>
+            <if test="maxRowErrors != null">#{maxRowErrors},</if>
+            <if test="skipHeaderLines != null">#{skipHeaderLines},</if>
+            <if test="jobEnabled != null">#{jobEnabled},</if>
+            <if test="cronExpression != null">#{cronExpression},</if>
+            <if test="concurrentMode != null">#{concurrentMode},</if>
+            <if test="lastTriggerTime != null">#{lastTriggerTime},</if>
+            <if test="lastFinishTime != null">#{lastFinishTime},</if>
+            <if test="lastStatus != null">#{lastStatus},</if>
+            <if test="lastMessage != null">#{lastMessage},</if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.tydic.filehub.dto.CodeFileOper">
+        update code_file_oper
+        <set>
+            <if test="fileOperCode != null">file_oper_code = #{fileOperCode},</if>
+            <if test="jobName != null">job_name = #{jobName},</if>
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="serverIp != null">server_ip = #{serverIp},</if>
+            <if test="serverPort != null">server_port = #{serverPort},</if>
+            <if test="serverUserName != null">server_user_name = #{serverUserName},</if>
+            <if test="serverPassword != null">server_password = #{serverPassword},</if>
+            <if test="filePath != null">file_path = #{filePath},</if>
+            <if test="operType != null">oper_type = #{operType},</if>
+            <if test="downloadDealType != null">download_deal_type = #{downloadDealType},</if>
+            <if test="downloadDataUpdateCondition != null">download_data_update_condition = #{downloadDataUpdateCondition},</if>
+            <if test="fileUrl != null">file_url = #{fileUrl},</if>
+            <if test="downloadTbName != null">download_tb_name = #{downloadTbName},</if>
+            <if test="splitLabel != null">split_label = #{splitLabel},</if>
+            <if test="fileFormat != null">file_format = #{fileFormat},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="fileNameExtSql != null">file_name_ext_sql = #{fileNameExtSql},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="querySql != null">query_sql = #{querySql},</if>
+            <if test="insertColumnName != null">insert_column_name = #{insertColumnName},</if>
+            <if test="dealRemark != null">deal_remark = #{dealRemark},</if>
+            <if test="dealTime != null">deal_time = #{dealTime},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="dataSource != null">data_source = #{dataSource},</if>
+            <if test="isUploadOss != null">is_upload_oss = #{isUploadOss},</if>
+            <if test="datasourceCode != null">datasource_code = #{datasourceCode},</if>
+            <if test="fileListShell != null">file_list_shell = #{fileListShell},</if>
+            <if test="fileListShellEnable != null">file_list_shell_enable = #{fileListShellEnable},</if>
+            <if test="fileOperGroovyBefore != null">file_oper_groovy_before = #{fileOperGroovyBefore},</if>
+            <if test="fileOperGroovyBeforeEnable != null">file_oper_groovy_before_enable = #{fileOperGroovyBeforeEnable},</if>
+            <if test="fileOperGroovyAfter != null">file_oper_groovy_after = #{fileOperGroovyAfter},</if>
+            <if test="fileOperGroovyAfterEnable != null">file_oper_groovy_after_enable = #{fileOperGroovyAfterEnable},</if>
+            <if test="stopOnRowError != null">stop_on_row_error = #{stopOnRowError},</if>
+            <if test="maxRowErrors != null">max_row_errors = #{maxRowErrors},</if>
+            <if test="skipHeaderLines != null">skip_header_lines = #{skipHeaderLines},</if>
+            <if test="jobEnabled != null">job_enabled = #{jobEnabled},</if>
+            <if test="cronExpression != null">cron_expression = #{cronExpression},</if>
+            <if test="concurrentMode != null">concurrent_mode = #{concurrentMode},</if>
+            <if test="lastTriggerTime != null">last_trigger_time = #{lastTriggerTime},</if>
+            <if test="lastFinishTime != null">last_finish_time = #{lastFinishTime},</if>
+            <if test="lastStatus != null">last_status = #{lastStatus},</if>
+            <if test="lastMessage != null">last_message = #{lastMessage},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteByPrimaryKey">
+        delete from code_file_oper where id = #{id}
+    </delete>
+</mapper>

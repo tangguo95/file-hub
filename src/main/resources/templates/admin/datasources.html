@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>动态数据源管理</title>
+    <link rel="stylesheet" th:href="@{/admin/admin.css}">
+</head>
+<body>
+<div class="shell">
+    <aside class="sidebar">
+        <h1>File Hub</h1>
+        <nav>
+            <a th:href="@{/admin/jobs}">定时任务</a>
+            <a th:href="@{/admin/files}">文件任务</a>
+            <a class="active" th:href="@{/admin/datasources}">动态数据源</a>
+        </nav>
+    </aside>
+    <main class="content">
+        <header class="hero">
+            <div>
+                <h2>动态数据源管理</h2>
+                <p>维护数据源编码、连接串、驱动、启停和连通性测试。</p>
+            </div>
+            <p class="flash" th:if="${message}" th:text="${message}"></p>
+        </header>
+
+        <section class="card form-card">
+            <h3>数据源表单</h3>
+            <form th:action="@{/admin/datasources/save}" method="post">
+                <input type="hidden" name="id" th:value="${datasourceForm.id}">
+                <div class="grid">
+                    <label>数据源编码<input name="datasourceCode" th:value="${datasourceForm.datasourceCode}"></label>
+                    <label>连接串<input name="dataIp" th:value="${datasourceForm.dataIp}"></label>
+                    <label>用户名<input name="username" th:value="${datasourceForm.username}"></label>
+                    <label>密码<input type="password" name="password" th:value="${datasourceForm.password}" placeholder="留空则不修改"></label>
+                    <label>驱动类<input name="driveName" th:value="${datasourceForm.driveName}"></label>
+                    <label>类型
+                        <select name="datasourceType" th:value="${datasourceForm.datasourceType}">
+                            <option value="1">MySQL</option>
+                            <option value="2">Oracle</option>
+                        </select>
+                    </label>
+                    <label>状态
+                        <select name="state" th:value="${datasourceForm.state}">
+                            <option value="1">有效</option>
+                            <option value="0">无效</option>
+                        </select>
+                    </label>
+                </div>
+                <label>备注<textarea name="remark" rows="3" th:text="${datasourceForm.remark}"></textarea></label>
+                <div class="actions">
+                    <button type="submit">保存数据源</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="card">
+            <h3>数据源列表</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>编码</th>
+                    <th>连接串</th>
+                    <th>驱动</th>
+                    <th>类型</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item : ${datasources}">
+                    <td th:text="${item.datasourceCode}"></td>
+                    <td th:text="${item.dataIp}"></td>
+                    <td th:text="${item.driveName}"></td>
+                    <td th:text="${item.datasourceType == 2 ? 'Oracle' : 'MySQL'}"></td>
+                    <td th:text="${item.state == 1 ? '有效' : '无效'}"></td>
+                    <td class="table-actions">
+                        <a th:href="@{/admin/datasources(editCode=${item.datasourceCode})}">编辑</a>
+                        <form th:action="@{|/admin/datasources/${item.datasourceCode}/test|}" method="post"><button type="submit">测试连接</button></form>
+                        <form th:action="@{|/admin/datasources/${item.datasourceCode}/toggle|}" method="post"><button type="submit">切换状态</button></form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+</body>
+</html>
