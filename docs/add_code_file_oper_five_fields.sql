@@ -1,4 +1,4 @@
--- CODE_FILE_OPER 表增加 5 个字段（MySQL）
+-- CODE_FILE_OPER 表增加 5 个字段
 -- 1) file_list_shell 开关  2) 上传/下载前 Groovy  3) 前 Groovy 开关
 -- 4) 上传/下载成功后 Groovy  5) 后 Groovy 开关
 
