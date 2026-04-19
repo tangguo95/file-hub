@@ -18,12 +18,20 @@ public class CodeFileOperAdminService {
     private final CodeFileOperMapper codeFileOperMapper;
     private final SchedulerManager schedulerManager;
 
-    public List<CodeFileOper> search(String keyword, Integer state) {
-        return codeFileOperMapper.search(keyword, state);
+    public List<CodeFileOper> search(String keyword, Integer state, String createdBy) {
+        return codeFileOperMapper.search(keyword, state, createdBy);
     }
 
     public CodeFileOper findById(Long id) {
         return id == null ? new CodeFileOper() : codeFileOperMapper.selectByPrimaryKey(id);
+    }
+
+    public CodeFileOper findByIdAndCreatedBy(Long id, String createdBy) {
+        return id == null ? new CodeFileOper() : codeFileOperMapper.selectByIdAndCreatedBy(id, createdBy);
+    }
+
+    public CodeFileOper findByFileOperCodeAndCreatedBy(String fileOperCode, String createdBy) {
+        return codeFileOperMapper.selectByFileOperCodeAndCreatedBy(fileOperCode, createdBy);
     }
 
     public void save(CodeFileOper record) {
@@ -51,12 +59,12 @@ public class CodeFileOperAdminService {
         schedulerManager.refreshJob(record.getFileOperCode());
     }
 
-    public void delete(Long id) {
-        CodeFileOper existing = codeFileOperMapper.selectByPrimaryKey(id);
+    public void delete(Long id, String createdBy) {
+        CodeFileOper existing = codeFileOperMapper.selectByIdAndCreatedBy(id, createdBy);
         if (existing == null) {
             return;
         }
-        codeFileOperMapper.deleteByPrimaryKey(id);
+        codeFileOperMapper.deleteByIdAndCreatedBy(id, createdBy);
         schedulerManager.removeJob(existing.getFileOperCode());
     }
 }

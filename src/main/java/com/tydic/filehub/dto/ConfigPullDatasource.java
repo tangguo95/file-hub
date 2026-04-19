@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class ConfigPullDatasource {
     private Long id;
+    private String createdBy;
     private String datasourceCode;
     private String dataIp;
     private String username;

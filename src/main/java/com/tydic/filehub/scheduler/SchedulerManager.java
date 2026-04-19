@@ -60,8 +60,8 @@ public class SchedulerManager {
         }
     }
 
-    public void triggerNow(String fileOperCode) {
-        execute(fileOperCode, TriggerType.MANUAL);
+    public void triggerNow(String fileOperCode, String createdBy) {
+        execute(fileOperCode, TriggerType.MANUAL, createdBy);
     }
 
     private boolean isSchedulable(CodeFileOper job) {
@@ -73,19 +73,19 @@ public class SchedulerManager {
 
     private void schedule(CodeFileOper job) {
         ScheduledFuture<?> future = taskScheduler.schedule(
-                () -> execute(job.getFileOperCode(), TriggerType.AUTO),
+                () -> execute(job.getFileOperCode(), TriggerType.AUTO, job.getCreatedBy()),
                 new CronTrigger(job.getCronExpression())
         );
         scheduledTasks.put(job.getFileOperCode(), future);
     }
 
-    private void execute(String fileOperCode, TriggerType triggerType) {
+    private void execute(String fileOperCode, TriggerType triggerType, String createdBy) {
         if (!runningTasks.add(fileOperCode)) {
-            JobExecutionLog rejected = jobExecutionLogService.start(fileOperCode, triggerType);
+            JobExecutionLog rejected = jobExecutionLogService.start(fileOperCode, triggerType, createdBy);
             jobExecutionLogService.finish(rejected, "REJECTED", "任务正在执行，拒绝重复触发", null);
             return;
         }
-        JobExecutionLog executionLog = jobExecutionLogService.start(fileOperCode, triggerType);
+        JobExecutionLog executionLog = jobExecutionLogService.start(fileOperCode, triggerType, createdBy);
         try {
             CodeFileOper update = new CodeFileOper();
             update.setId(codeFileOperMapper.selectByFileOperCode(fileOperCode).getId());

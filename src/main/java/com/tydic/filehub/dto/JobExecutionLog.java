@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class JobExecutionLog {
     private Long id;
+    private String createdBy;
     private String fileOperCode;
     private String triggerType;
     private String status;

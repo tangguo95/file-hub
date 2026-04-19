@@ -4,6 +4,7 @@
 
     <resultMap id="CodeFileOperMap" type="com.tydic.filehub.dto.CodeFileOper">
         <id column="id" property="id"/>
+        <result column="created_by" property="createdBy"/>
         <result column="file_oper_code" property="fileOperCode"/>
         <result column="job_name" property="jobName"/>
         <result column="file_name" property="fileName"/>
@@ -51,7 +52,7 @@
     </resultMap>
 
     <sql id="allColumns">
-        id, file_oper_code, job_name, file_name, server_ip, server_port, server_user_name, server_password,
+        id, created_by, file_oper_code, job_name, file_name, server_ip, server_port, server_user_name, server_password,
         file_path, oper_type, download_deal_type, download_data_update_condition, file_url, download_tb_name,
         split_label, file_format, create_time, update_time, state, file_name_ext_sql, remark, query_sql, insert_column_name,
         deal_remark, deal_time, is_delete, data_source, is_upload_oss, datasource_code, file_list_shell,
@@ -83,6 +84,9 @@
         select <include refid="allColumns"/>
         from code_file_oper
         <where>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
             <if test="keyword != null and keyword != ''">
                 and (
                     file_oper_code like concat('%', #{keyword}, '%')
@@ -97,6 +101,23 @@
         order by update_time desc, id desc
     </select>
 
+    <select id="selectByIdAndCreatedBy" resultMap="CodeFileOperMap">
+        select <include refid="allColumns"/>
+        from code_file_oper
+        where id = #{id} and created_by = #{createdBy}
+    </select>
+
+    <select id="selectByFileOperCodeAndCreatedBy" resultMap="CodeFileOperMap">
+        select <include refid="allColumns"/>
+        from code_file_oper
+        where file_oper_code = #{fileOperCode} and created_by = #{createdBy}
+        limit 1
+    </select>
+
+    <delete id="deleteByIdAndCreatedBy">
+        delete from code_file_oper where id = #{id} and created_by = #{createdBy}
+    </delete>
+
     <select id="selectSchedulableJobs" resultMap="CodeFileOperMap">
         select <include refid="allColumns"/>
         from code_file_oper
@@ -110,6 +131,7 @@
     <insert id="insertSelective" parameterType="com.tydic.filehub.dto.CodeFileOper" useGeneratedKeys="true" keyProperty="id">
         insert into code_file_oper
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createdBy != null">created_by,</if>
             <if test="fileOperCode != null">file_oper_code,</if>
             <if test="jobName != null">job_name,</if>
             <if test="fileName != null">file_name,</if>
@@ -156,6 +178,7 @@
             <if test="lastMessage != null">last_message,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="createdBy != null">#{createdBy},</if>
             <if test="fileOperCode != null">#{fileOperCode},</if>
             <if test="jobName != null">#{jobName},</if>
             <if test="fileName != null">#{fileName},</if>
@@ -206,6 +229,7 @@
     <update id="updateByPrimaryKeySelective" parameterType="com.tydic.filehub.dto.CodeFileOper">
         update code_file_oper
         <set>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
             <if test="fileOperCode != null">file_oper_code = #{fileOperCode},</if>
             <if test="jobName != null">job_name = #{jobName},</if>
             <if test="fileName != null">file_name = #{fileName},</if>

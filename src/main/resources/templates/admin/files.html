@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>文件任务管理</title>
@@ -9,11 +9,18 @@
 <div class="shell">
     <aside class="sidebar">
         <h1>File Hub</h1>
+        <div class="user-info">
+            <span th:text="${nickname ?: username}">用户</span>
+            <span class="user-account" th:text="${username}">用户名</span>
+        </div>
         <nav>
             <a th:href="@{/admin/jobs}">定时任务</a>
             <a class="active" th:href="@{/admin/files}">文件任务</a>
             <a th:href="@{/admin/datasources}">动态数据源</a>
         </nav>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="btn-logout">登出</button>
+        </form>
     </aside>
     <main class="content">
         <header class="hero">

@@ -4,6 +4,7 @@
 
     <resultMap id="DatasourceMap" type="com.tydic.filehub.dto.ConfigPullDatasource">
         <id column="id" property="id"/>
+        <result column="created_by" property="createdBy"/>
         <result column="datasource_code" property="datasourceCode"/>
         <result column="data_ip" property="dataIp"/>
         <result column="username" property="username"/>
@@ -17,7 +18,7 @@
     </resultMap>
 
     <sql id="allColumns">
-        id, datasource_code, data_ip, username, password, drive_name,
+        id, created_by, datasource_code, data_ip, username, password, drive_name,
         datasource_type, state, create_time, update_time, remark
     </sql>
 
@@ -50,9 +51,36 @@
         order by update_time desc, id desc
     </select>
 
+    <select id="selectAllByCreatedBy" resultMap="DatasourceMap">
+        select <include refid="allColumns"/>
+        from config_pull_datasource
+        <where>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                and (
+                    datasource_code like concat('%', #{keyword}, '%')
+                    or ifnull(remark, '') like concat('%', #{keyword}, '%')
+                )
+            </if>
+        </where>
+        order by update_time desc, id desc
+    </select>
+
+    <select id="selectByCodeAndCreatedBy" resultMap="DatasourceMap">
+        select <include refid="allColumns"/>
+        from config_pull_datasource
+        where datasource_code = #{datasourceCode}
+          and created_by = #{createdBy}
+          and state = 1
+        limit 1
+    </select>
+
     <insert id="insertSelective" parameterType="com.tydic.filehub.dto.ConfigPullDatasource" useGeneratedKeys="true" keyProperty="id">
         insert into config_pull_datasource
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="createdBy != null">created_by,</if>
             <if test="datasourceCode != null">datasource_code,</if>
             <if test="dataIp != null">data_ip,</if>
             <if test="username != null">username,</if>
@@ -65,6 +93,7 @@
             <if test="remark != null">remark,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="createdBy != null">#{createdBy},</if>
             <if test="datasourceCode != null">#{datasourceCode},</if>
             <if test="dataIp != null">#{dataIp},</if>
             <if test="username != null">#{username},</if>
@@ -81,6 +110,7 @@
     <update id="updateByPrimaryKeySelective" parameterType="com.tydic.filehub.dto.ConfigPullDatasource">
         update config_pull_datasource
         <set>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
             <if test="datasourceCode != null">datasource_code = #{datasourceCode},</if>
             <if test="dataIp != null">data_ip = #{dataIp},</if>
             <if test="username != null">username = #{username},</if>

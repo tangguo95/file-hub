@@ -14,4 +14,6 @@ public interface JobExecutionLogMapper {
                                                      @Param("limit") int limit);
 
     List<JobExecutionLog> selectRecent(@Param("limit") int limit);
+
+    List<JobExecutionLog> selectRecentByCreatedBy(@Param("createdBy") String createdBy, @Param("limit") int limit);
 }

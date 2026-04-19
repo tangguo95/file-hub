@@ -26,10 +26,20 @@ public class DynamicDatasourceAdminService {
         return configPullDatasourceMapper.selectAll(keyword);
     }
 
+    public List<ConfigPullDatasource> listByCreatedBy(String keyword, String createdBy) {
+        return configPullDatasourceMapper.selectAllByCreatedBy(keyword, createdBy);
+    }
+
     public ConfigPullDatasource find(String datasourceCode) {
         return !StringUtils.hasText(datasourceCode)
                 ? new ConfigPullDatasource()
                 : configPullDatasourceMapper.selectAnyByCode(datasourceCode);
+    }
+
+    public ConfigPullDatasource findByCodeAndCreatedBy(String datasourceCode, String createdBy) {
+        return !StringUtils.hasText(datasourceCode)
+                ? new ConfigPullDatasource()
+                : configPullDatasourceMapper.selectByCodeAndCreatedBy(datasourceCode, createdBy);
     }
 
     public void save(ConfigPullDatasource datasource) throws Exception {
@@ -54,13 +64,13 @@ public class DynamicDatasourceAdminService {
         dynamicDataSourceManager.removeDataSource(datasource.getDatasourceCode());
     }
 
-    public boolean testConnection(String datasourceCode) {
+    public boolean testConnection(String datasourceCode, String employeeId) {
         dynamicDataSourceManager.removeDataSource(datasourceCode);
         return dynamicDataSourceManager.testConnection(datasourceCode);
     }
 
-    public void toggle(String datasourceCode) {
-        ConfigPullDatasource existing = configPullDatasourceMapper.selectAnyByCode(datasourceCode);
+    public void toggle(String datasourceCode, String createdBy) {
+        ConfigPullDatasource existing = configPullDatasourceMapper.selectByCodeAndCreatedBy(datasourceCode, createdBy);
         if (existing == null) {
             return;
         }

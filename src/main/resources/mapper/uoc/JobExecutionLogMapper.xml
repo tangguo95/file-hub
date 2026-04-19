@@ -4,6 +4,7 @@
 
     <resultMap id="JobExecutionLogMap" type="com.tydic.filehub.dto.JobExecutionLog">
         <id column="id" property="id"/>
+        <result column="created_by" property="createdBy"/>
         <result column="file_oper_code" property="fileOperCode"/>
         <result column="trigger_type" property="triggerType"/>
         <result column="status" property="status"/>
@@ -16,10 +17,10 @@
 
     <insert id="insert" parameterType="com.tydic.filehub.dto.JobExecutionLog" useGeneratedKeys="true" keyProperty="id">
         insert into job_execution_log (
-            file_oper_code, trigger_type, status, summary, error_stack,
+            created_by, file_oper_code, trigger_type, status, summary, error_stack,
             start_time, end_time, create_time
         ) values (
-            #{fileOperCode}, #{triggerType}, #{status}, #{summary}, #{errorStack},
+            #{createdBy}, #{fileOperCode}, #{triggerType}, #{status}, #{summary}, #{errorStack},
             #{startTime}, #{endTime}, #{createTime}
         )
     </insert>
@@ -34,7 +35,7 @@
     </update>
 
     <select id="selectRecentByFileOperCode" resultMap="JobExecutionLogMap">
-        select id, file_oper_code, trigger_type, status, summary, error_stack, start_time, end_time, create_time
+        select id, created_by, file_oper_code, trigger_type, status, summary, error_stack, start_time, end_time, create_time
         from job_execution_log
         where file_oper_code = #{fileOperCode}
         order by id desc
@@ -42,8 +43,16 @@
     </select>
 
     <select id="selectRecent" resultMap="JobExecutionLogMap">
-        select id, file_oper_code, trigger_type, status, summary, error_stack, start_time, end_time, create_time
+        select id, created_by, file_oper_code, trigger_type, status, summary, error_stack, start_time, end_time, create_time
         from job_execution_log
+        order by id desc
+        limit #{limit}
+    </select>
+
+    <select id="selectRecentByCreatedBy" resultMap="JobExecutionLogMap">
+        select id, created_by, file_oper_code, trigger_type, status, summary, error_stack, start_time, end_time, create_time
+        from job_execution_log
+        where created_by = #{createdBy}
         order by id desc
         limit #{limit}
     </select>

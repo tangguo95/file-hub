@@ -12,13 +12,19 @@ public interface CodeFileOperMapper {
 
     CodeFileOper selectByPrimaryKey(Long id);
 
+    CodeFileOper selectByIdAndCreatedBy(@Param("id") Long id, @Param("createdBy") String createdBy);
+
     int updateByPrimaryKeySelective(CodeFileOper record);
 
     CodeFileOper selectByFileOperCode(String fileOperCode);
+
+    CodeFileOper selectByFileOperCodeAndCreatedBy(@Param("fileOperCode") String fileOperCode, @Param("createdBy") String createdBy);
 
     List<CodeFileOper> selectAll();
 
     List<CodeFileOper> selectSchedulableJobs();
 
-    List<CodeFileOper> search(@Param("keyword") String keyword, @Param("state") Integer state);
+    List<CodeFileOper> search(@Param("keyword") String keyword, @Param("state") Integer state, @Param("createdBy") String createdBy);
+
+    int deleteByIdAndCreatedBy(@Param("id") Long id, @Param("createdBy") String createdBy);
 }

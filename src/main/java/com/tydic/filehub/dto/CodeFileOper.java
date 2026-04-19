@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class CodeFileOper {
     private Long id;
+    private String createdBy;
     private String fileOperCode;
     private String jobName;
     private String fileName;

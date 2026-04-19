@@ -15,8 +15,9 @@ public class JobExecutionLogService {
 
     private final JobExecutionLogMapper jobExecutionLogMapper;
 
-    public JobExecutionLog start(String fileOperCode, TriggerType triggerType) {
+    public JobExecutionLog start(String fileOperCode, TriggerType triggerType, String createdBy) {
         JobExecutionLog log = new JobExecutionLog();
+        log.setCreatedBy(createdBy);
         log.setFileOperCode(fileOperCode);
         log.setTriggerType(triggerType.name());
         log.setStatus("RUNNING");
@@ -41,5 +42,9 @@ public class JobExecutionLogService {
 
     public List<JobExecutionLog> recent(int limit) {
         return jobExecutionLogMapper.selectRecent(limit);
+    }
+
+    public List<JobExecutionLog> recentByCreatedBy(String createdBy, int limit) {
+        return jobExecutionLogMapper.selectRecentByCreatedBy(createdBy, limit);
     }
 }
