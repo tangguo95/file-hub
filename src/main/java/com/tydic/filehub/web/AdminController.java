@@ -185,7 +185,6 @@ public class AdminController {
         record.setConcurrentMode("SERIAL");
         record.setOperType(1);
         record.setDownloadDealType(1);
-        record.setSplitLabel(",");
         record.setFileFormat("CSV");
         record.setStopOnRowError(1);
         return record;

@@ -44,12 +44,30 @@
                     <label>远端路径<input name="filePath" th:value="${fileForm.filePath}"></label>
                     <label>服务器用户名<input name="serverUserName" th:value="${fileForm.serverUserName}"></label>
                     <label>服务器密码<input type="password" name="serverPassword" th:value="${fileForm.serverPassword}" placeholder="留空则不修改"></label>
-                    <label>字段分隔符<input name="splitLabel" th:value="${fileForm.splitLabel}"></label>
+                    <label>字段分隔符<input name="splitLabel" th:value="${fileForm.splitLabel}" list="splitLabelList" placeholder="选择或自定义">
+                        <datalist id="splitLabelList">
+                            <option value=",">逗号</option>
+                            <option value="&#9;">制表符(Tab)</option>
+                            <option value=";">分号</option>
+                            <option value="|">竖线</option>
+                            <option value=" ">空格</option>
+                            <option value="\x01">SOH(0x01)</option>
+                            <option value="\x02">STX(0x02)</option>
+                            <option value="\x1f">US(0x1F)</option>
+                            <option value="\x1e">RS(0x1E)</option>
+                        </datalist>
+                    </label>
                     <label>文件格式
                         <select name="fileFormat" th:value="${fileForm.fileFormat}">
                             <option value="CSV">CSV</option>
                             <option value="XLS">XLS (Excel 97-2003)</option>
                             <option value="XLSX">XLSX (Excel 2007+)</option>
+                        </select>
+                    </label>
+                    <label>跳过首行
+                        <select name="skipHeaderLines" th:value="${fileForm.skipHeaderLines}">
+                            <option value="0">不跳过</option>
+                            <option value="1">跳过首行</option>
                         </select>
                     </label>
                     <label>入库表<input name="downloadTbName" th:value="${fileForm.downloadTbName}"></label>
